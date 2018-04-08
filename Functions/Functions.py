@@ -76,3 +76,12 @@ def create_json(json_dic):
     file.write("}\n")
 
 
+def make_window():
+    import tkinter as tk
+    window = tk.Tk()
+    window.title("SqlDBM to Json file")
+    window.geometry('380x300')
+    window.configure(background='navy')
+    label_first = tk.Label(window,text="Welcome to my Json converter", bg="navy", fg="white")
+    label_first.pack(fill=tk.X)
+    window.mainloop()
