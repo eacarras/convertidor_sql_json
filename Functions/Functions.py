@@ -59,3 +59,20 @@ def validate_of_txt(file_txt):
         return True
     else:
         return False;
+
+
+def create_json(json_dic):
+    file = open("model.json", "w")
+    file.write("{\n")
+    for table, columns in json_dic.items():
+        file.write("  '{}': [\n".format(table))
+        file.write("   {\n")
+        for column in columns:
+            if column == columns[-1]:
+                file.write("     '{}': ''\n".format(column))
+            else:
+                file.write("     '{}': '',\n".format(column))
+        file.write("   },\n")
+    file.write("}\n")
+
+
