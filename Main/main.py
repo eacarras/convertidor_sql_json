@@ -1,4 +1,6 @@
+from __future__ import print_function
 from Functions.Functions import *
+
 
 print("Welcome, please insert 'G' to generate a json file with the columns and fillings in blank or any key to go direct to the create of tables")
 key = input()

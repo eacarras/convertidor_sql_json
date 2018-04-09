@@ -88,7 +88,6 @@ def make_window():
 
 
 def create_Table_shell(name_database, endpoint, region):
-    from __future__ import print_function
     import boto3
 
     dynamodb = boto3.resource(name_database, region_name=region, endpoint_url=endpoint)
