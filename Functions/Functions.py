@@ -55,7 +55,7 @@ def validate_of_txt(file_txt):
             for word in words_of_my_sql:
                 if word in line:
                     count += 1
-    if count > 0:
+    if count >= 5:
         return True
     else:
         return False;
@@ -85,3 +85,60 @@ def make_window():
     label_first = tk.Label(window,text="Welcome to my Json converter", bg="navy", fg="white")
     label_first.pack(fill=tk.X)
     window.mainloop()
+
+
+def create_Table_shell(name_database, endpoint, region):
+    from __future__ import print_function
+    import boto3
+
+    dynamodb = boto3.resource(name_database, region_name=region, endpoint_url=endpoint)
+    name_table = input("Insert the name of the table")
+    flat = "S"
+    while flat != "N":
+        print("This is the name of the table that you insert " + name_table + "if it's okey please enter N")
+        flat = input()
+    attribute_name = input("Insert the attributeName of you Primary Key: ")
+    key_type = input("Insert the key type of your Primary key: ")
+    attribute_name_definitions = input("Insert the attribute name of the attribute definitions: ")
+    attribute_type = input("Insert the attribute type of the attribute definitions: ")
+    read_capacity = input("Insert the read capacity: ")
+    write_capacity = input("Insert the write capacity: ")
+    table = dynamodb.create_table(
+        TableName=name_table,
+        KeySchema=[
+            {
+                'AttributeName': attribute_name,
+                'KeyType': key_type
+            }
+        ],
+        AttributeDefinitions=[
+            {
+                'AttributeName' : attribute_name_definitions,
+                'AttributeType' : attribute_type
+            }
+        ],
+        ProvisionedThroughput={
+            'ReadCapacityUnits' : read_capacity,
+            'WriteCapacityUnits' : write_capacity
+        }
+    )
+
+    print("Table status: ", table.table_status)
+
+
+def validation_of_namedatabase_region_endpoint(String):
+    split = String.split(",")
+    len_split = len(split)
+    if (len_split == 3):
+        endpoint = split[-1]
+        endpoint_split = endpoint.split(":")
+        if endpoint_split[0] == "http" or endpoint_split[0] == "https":
+            return False
+    else:
+        return True
+
+
+def split_of_Name(String):
+    String = String.split(",")
+    database = String[0] ; region = String[1] ; endpoint = String[-1]
+    return database,region,endpoint
