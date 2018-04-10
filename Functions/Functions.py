@@ -87,10 +87,10 @@ def make_window():
     window.mainloop()
 
 
-def create_Table_shell(name_database, endpoint, region):
+def create_table_shell(endpoint, region):
     import boto3
 
-    dynamodb = boto3.resource(name_database, region_name=region, endpoint_url=endpoint)
+    dynamodb = boto3.resource('dynamodb', region_name=region, endpoint_url=endpoint)
     name_table = input("Insert the name of the table")
     flat = "S"
     while flat != "N":
@@ -125,19 +125,22 @@ def create_Table_shell(name_database, endpoint, region):
     print("Table status: ", table.table_status)
 
 
-def validation_of_namedatabase_region_endpoint(String):
+def validation_of_region_endpoint(String):
     split = String.split(",")
     len_split = len(split)
-    if (len_split == 3):
+    if len_split == 2:
         endpoint = split[-1]
         endpoint_split = endpoint.split(":")
         if endpoint_split[0] == "http" or endpoint_split[0] == "https":
             return False
+        else:
+            return True
     else:
         return True
 
 
-def split_of_Name(String):
-    String = String.split(",")
-    database = String[0] ; region = String[1] ; endpoint = String[-1]
-    return database,region,endpoint
+def split_of_name(string):
+    string = string.split(",")
+    region = string[0]
+    endpoint = string[1]
+    return region, endpoint

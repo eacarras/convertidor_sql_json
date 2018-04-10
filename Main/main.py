@@ -16,16 +16,16 @@ if key == "G":
     else:
         print("You insert a not sql file")
 
-print("Please insert the name of the database, the region and the endpoint url, all sepate with coma and merge")
+print("Please insert the region and the endpoint url, all separate with coma and merge")
 String = input()
-while validation_of_namedatabase_region_endpoint(String):
+while validation_of_region_endpoint(String):
     print("Incorrect input, please insert the characters in the correct form")
     String = input()
-database_name, region, endpoint_url = split_of_Name(String)
+region, endpoint_url = split_of_name(String)
 
 print("PD: When you finish only write at the final 'F', Good Luck")
 key = "A"
 while key != "F":
-    create_Table_shell(database_name, region, endpoint_url)
+    create_table_shell(region, endpoint_url)
     print("Insert 'F' or any key to continue creating tables")
     key = input()
