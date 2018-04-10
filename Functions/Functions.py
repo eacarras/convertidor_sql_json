@@ -8,10 +8,11 @@ def create_principal_dic(file_txt):
         line = line.strip()
         if line.count(" ") > 0:
             line = line.split(" ")
-            if("TABLE" in line) and ("DROP" in line):
-                table = line[-1].strip("[").strip(";")
+            if("TABLE" in line) and ("CREATE" in line):
+                table = line[-1].strip("[")
                 table = table.strip("]")
                 json[table] = []
+
     file.close()
     return json;
 
@@ -73,6 +74,7 @@ def create_json(json_dic):
             else:
                 file.write("     '{}': '',\n".format(column))
         file.write("   },\n")
+        file.write("   ],\n")
     file.write("}\n")
 
 
@@ -87,46 +89,65 @@ def make_window():
     window.mainloop()
 
 
-def create_table_shell(endpoint, region):
+def create_table_shell(endpoint, region, file_txt):
     import boto3
 
+    # extract name of tables in the file
+    name_tables = []
+    file = open(file_txt, "r")
+    for line in file:
+        line = line.strip()
+        if line.count(" ") > 0:
+            line = line.split(" ")
+            if ("TABLE" in line) and ("CREATE" in line):
+                table = line[-1].strip("[")
+                table = table.strip("]")
+                name_tables.append(table)
+
+    # extract the primary key of the tables
+    name_primary_keys = []
+    file = open(file_txt, "r")
+    for line in file:
+        line = line.strip()
+        if line.count(" ") > 0:
+            line = line.split(" ")
+            if ("CONSTRAINT" in line) and ("PRIMARY" in line):
+                table = line[-2].strip("(")
+                table = table.strip("]")
+                table = table.strip("[")
+                name_primary_keys.append(table)
+
+    # connect with DynamoDB
     dynamodb = boto3.resource('dynamodb', region_name=region, endpoint_url=endpoint)
-    name_table = input("Insert the name of the table")
-    flat = "S"
-    while flat != "N":
-        print("This is the name of the table that you insert " + name_table + "if it's okey please enter N")
-        flat = input()
-    attribute_name = input("Insert the attributeName of you Primary Key: ")
-    key_type = input("Insert the key type of your Primary key: ")
-    attribute_name_definitions = input("Insert the attribute name of the attribute definitions: ")
-    attribute_type = input("Insert the attribute type of the attribute definitions: ")
-    read_capacity = input("Insert the read capacity: ")
-    write_capacity = input("Insert the write capacity: ")
-    table = dynamodb.create_table(
-        TableName=name_table,
-        KeySchema=[
-            {
-                'AttributeName': attribute_name,
-                'KeyType': key_type
+
+    # create the tables with his primary keys
+    count = 0
+    for name_table in name_tables:
+        table = dynamodb.create_table(
+            TableName=name_table,
+            KeySchema=[
+                {
+                    'AttributeName': name_primary_keys[count],
+                    'KeyType': 'HASH'
+                }
+            ],
+            AttributeDefinitions=[
+                {
+                    'AttributeName': name_primary_keys[count],
+                    'AttributeType': 'S'
+                }
+            ],
+            ProvisionedThroughput={
+                'ReadCapacityUnits': 10,
+                'WriteCapacityUnits': 10
             }
-        ],
-        AttributeDefinitions=[
-            {
-                'AttributeName' : attribute_name_definitions,
-                'AttributeType' : attribute_type
-            }
-        ],
-        ProvisionedThroughput={
-            'ReadCapacityUnits' : read_capacity,
-            'WriteCapacityUnits' : write_capacity
-        }
-    )
-
-    print("Table status: ", table.table_status)
+        )
+        count += 1
+        print("Table status: ", table.table_status)
 
 
-def validation_of_region_endpoint(String):
-    split = String.split(",")
+def validation_of_region_endpoint(string):
+    split = string.split(",")
     len_split = len(split)
     if len_split == 2:
         endpoint = split[-1]
@@ -144,3 +165,6 @@ def split_of_name(string):
     region = string[0]
     endpoint = string[1]
     return region, endpoint
+
+
+
