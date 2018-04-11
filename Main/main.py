@@ -26,18 +26,6 @@ if count == 0:
     while file_txt.split(".")[-1] != "txt":
         file_txt = input("File can't read, try again (PD: Only file with extension txt)\n")
 
-# the program ask the region and endpoint_url and validated it
-print("Please insert the region and the endpoint url, all separate with coma and merge")
-String = input()
-while validation_of_region_endpoint(String):
-    print("Incorrect input, please insert the characters in the correct form")
-    String = input()
-region, endpoint_url = split_of_name(String)
-
 # created tables
-print("PD: When you finish only write at the final 'F', Good Luck")
-key = "A"
-while key != "F":
-    create_table_shell(region, endpoint_url)
-    print("Insert 'F' or any key to continue creating tables")
-    key = input()
+print("Good Luck !")
+create_table_shell(file_txt)

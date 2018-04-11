@@ -89,8 +89,9 @@ def make_window():
     window.mainloop()
 
 
-def create_table_shell(endpoint, region, file_txt):
+def create_table_shell(file_txt):
     import boto3
+    import time
 
     # extract name of tables in the file
     name_tables = []
@@ -111,18 +112,22 @@ def create_table_shell(endpoint, region, file_txt):
         line = line.strip()
         if line.count(" ") > 0:
             line = line.split(" ")
-            if ("CONSTRAINT" in line) and ("PRIMARY" in line):
+            if ("CONSTRAINT" in line) and ("PRIMARY" in line) and (len(line) == 7):
                 table = line[-2].strip("(")
                 table = table.strip("]")
                 table = table.strip("[")
                 name_primary_keys.append(table)
+            elif ("CONSTRAINT" in line) and ("PRIMARY" in line) and (len(line) == 8):
+                name_primary_keys.append("fact")
 
     # connect with DynamoDB
-    dynamodb = boto3.resource('dynamodb', region_name=region, endpoint_url=endpoint)
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1', endpoint_url='http://dynamodb.us-east-1.amazonaws.com')
 
     # create the tables with his primary keys
     count = 0
     for name_table in name_tables:
+        name_table = "bpm_"+name_table
+        time.sleep(30)
         table = dynamodb.create_table(
             TableName=name_table,
             KeySchema=[
@@ -138,12 +143,15 @@ def create_table_shell(endpoint, region, file_txt):
                 }
             ],
             ProvisionedThroughput={
-                'ReadCapacityUnits': 10,
-                'WriteCapacityUnits': 10
+                'ReadCapacityUnits': 20,
+                'WriteCapacityUnits': 20
             }
         )
         count += 1
         print("Table status: ", table.table_status)
+
+    # confirmation of successfully
+    print("The database was created successfully")
 
 
 def validation_of_region_endpoint(string):
