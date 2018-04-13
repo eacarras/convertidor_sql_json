@@ -1,5 +1,8 @@
 words_of_my_sql = ["SET", "DROP", "CREATE", "PRIMARY", "INSERT"]
-
+words_avalibles_tables = ["A", "a", "B", "b", "C", "c", "D", "d", "E", "e", "F", "f", "G", "g", "H", "h","I", "i"
+                         "J", "j", "K", "k", "L", "l", "M", "m", "N", "n", "O", "o", "P", "p", "Q", "q", "R", "r"
+                         "S", "s", "T", "t", "U", "u", "V", "v", "w", "W", "X", "x", "Y", "y", "Z", "z", "0", "1"
+                         "2", "3", "4", "5", "6", "7", "8", "9", "-", "_", "."]
 
 def create_principal_dic(file_txt):
     json = {}
@@ -84,12 +87,12 @@ def make_window():
     window.title("SqlDBM to Json file")
     window.geometry('380x300')
     window.configure(background='navy')
-    label_first = tk.Label(window,text="Welcome to my Json converter", bg="navy", fg="white")
+    label_first = tk.Label(window, text="Welcome to my Json converter", bg="navy", fg="white")
     label_first.pack(fill=tk.X)
     window.mainloop()
 
 
-def create_table_shell(file_txt):
+def create_table_shell_automatically(file_txt):
     import boto3
     import time
 
@@ -143,8 +146,8 @@ def create_table_shell(file_txt):
                 }
             ],
             ProvisionedThroughput={
-                'ReadCapacityUnits': 20,
-                'WriteCapacityUnits': 20
+                'ReadCapacityUnits': 1,
+                'WriteCapacityUnits': 1
             }
         )
         count += 1
@@ -175,4 +178,45 @@ def split_of_name(string):
     return region, endpoint
 
 
+def create_table(region, endpoint_url, name_table, primary_key):
+    import boto3
+    import time
 
+    # connect with DynamoDB
+    dynamodb = boto3.resource('dynamodb', region_name=region,endpoint_url=endpoint_url)
+
+    # create the tables with his primary keys
+    time.sleep(30)
+    table = dynamodb.create_table(
+        TableName=name_table,
+        KeySchema=[
+            {
+                'AttributeName': primary_key,
+                'KeyType': 'HASH'
+            }
+        ],
+        AttributeDefinitions=[
+            {
+                'AttributeName': primary_key,
+                'AttributeType': 'S'
+            }
+        ],
+        ProvisionedThroughput={
+            'ReadCapacityUnits': 1,
+            'WriteCapacityUnits': 1
+        }
+    )
+    # confirmation of successfully
+    print("Table status: ", table.table_status);
+
+
+def validation_name_table(name):
+    global words_avalibles_tables
+    counter = 0
+    for letter in name:
+        if letter not in words_avalibles_tables:
+            counter += 1
+    if counter == 0:
+        return True
+    else:
+        return False;
