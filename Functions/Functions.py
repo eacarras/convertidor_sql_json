@@ -157,27 +157,6 @@ def create_table_shell_automatically(file_txt):
     print("The database was created successfully")
 
 
-def validation_of_region_endpoint(string):
-    split = string.split(",")
-    len_split = len(split)
-    if len_split == 2:
-        endpoint = split[-1]
-        endpoint_split = endpoint.split(":")
-        if endpoint_split[0] == "http" or endpoint_split[0] == "https":
-            return False
-        else:
-            return True
-    else:
-        return True
-
-
-def split_of_name(string):
-    string = string.split(",")
-    region = string[0]
-    endpoint = string[1]
-    return region, endpoint
-
-
 def create_table(region, endpoint_url, name_table, primary_key):
     import boto3
     import time
@@ -220,3 +199,31 @@ def validation_name_table(name):
         return True
     else:
         return False;
+
+
+def get_process(process_name):
+    import psutil
+
+    for process in psutil.process_iter():
+        if process.name() == process_name:
+            return process;
+
+
+def get_pid(process_name):
+    import psutil
+
+    for process in psutil.process_iter():
+        if process.name() == process_name:
+            return process.pid
+
+
+def get_endpoint(string):
+    file = open(".env", "r")
+    for line in file:
+        line = line.strip()
+        line = line.split(" ")
+        if string == line[0]:
+            endpoint = line[-1]
+    file.close()
+    return endpoint
+

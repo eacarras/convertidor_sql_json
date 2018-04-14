@@ -1,8 +1,30 @@
+#! /usr/bin/env python
 from __future__ import print_function
 from Functions.Functions import *
+from psutil import Process
 
+# validation of the process input
+process_name = input("Please input the service that you want to use: ")
+p_1 = get_process(process_name)
+if p_1 is not None:
+    print("The process exit ! You are running in localhost ")
+    status = True
+else:
+    print("The process doesn't exist, you are running in the cloud")
+    status = False
 
-# options of the programs
+# search the status of the process
+if status:
+    id = get_pid(process_name)
+    p = Process(id)
+    endpoint_url = get_endpoint("localhost")
+    print("The state is : " + p.status() + "\nYour endpoint are: " + endpoint_url)
+else:
+    print("We can't say the state of the process in localhost because doesn't exist")
+    endpoint_url = get_endpoint("cloud")
+    print("\nYour endpoint are: " + endpoint_url)
+
+# option of the program
 print("Welcome, please insert a option\n"
       "1.- Generate json file with empty fields\n"
       "2.- Generate automatically the tables using a sql server script\n"
@@ -61,11 +83,8 @@ while option != 4:
                     flat_copy = "A"
 
             # validation of the region and the endpoint url
-            print("Input the region and endpoint url separate with coma and all merge")
-            string = input()
-            while validation_of_region_endpoint(string):
-                string = input("Please insert a correct data: ")
-            region, endpoint_url = split_of_name(string)
+            print("Input the region ")
+            region = input()
             print("Input the name of the primary key")
             primary_key = input()
             # creation of the table
