@@ -4,6 +4,7 @@ words_avalibles_tables = ["A", "a", "B", "b", "C", "c", "D", "d", "E", "e", "F",
                          "S", "s", "T", "t", "U", "u", "V", "v", "w", "W", "X", "x", "Y", "y", "Z", "z", "0", "1"
                          "2", "3", "4", "5", "6", "7", "8", "9", "-", "_", "."]
 
+
 def create_principal_dic(file_txt):
     json = {}
     file = open(file_txt, "r")
@@ -92,7 +93,7 @@ def make_window():
     window.mainloop()
 
 
-def create_table_shell_automatically(file_txt):
+def create_table_shell_automatically(file_txt, endpoint_url):
     import boto3
     import time
 
@@ -124,7 +125,7 @@ def create_table_shell_automatically(file_txt):
                 name_primary_keys.append("fact")
 
     # connect with DynamoDB
-    dynamodb = boto3.resource('dynamodb', region_name='us-east-1', endpoint_url='http://dynamodb.us-east-1.amazonaws.com')
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1', endpoint_url=endpoint_url)
 
     # create the tables with his primary keys
     count = 0
@@ -162,7 +163,7 @@ def create_table(region, endpoint_url, name_table, primary_key):
     import time
 
     # connect with DynamoDB
-    dynamodb = boto3.resource('dynamodb', region_name=region,endpoint_url=endpoint_url)
+    dynamodb = boto3.resource('dynamodb', region_name=region, endpoint_url=endpoint_url)
 
     # create the tables with his primary keys
     time.sleep(30)

@@ -3,43 +3,24 @@ from __future__ import print_function
 from Functions.Functions import *
 from psutil import Process
 
-# validation of the process input
-process_name = input("Please input the service that you want to use: ")
-p_1 = get_process(process_name)
-if p_1 is not None:
-    print("The process exit ! You are running in localhost ")
-    status = True
-else:
-    print("The process doesn't exist, you are running in the cloud")
-    status = False
-
-# search the status of the process
-if status:
-    id = get_pid(process_name)
-    p = Process(id)
-    endpoint_url = get_endpoint("localhost")
-    print("The state is : " + p.status() + "\nYour endpoint are: " + endpoint_url)
-else:
-    print("We can't say the state of the process in localhost because doesn't exist")
-    endpoint_url = get_endpoint("cloud")
-    print("\nYour endpoint are: " + endpoint_url)
 
 # option of the program
 print("Welcome, please insert a option\n"
       "1.- Generate json file with empty fields\n"
       "2.- Generate automatically the tables using a sql server script\n"
       "3.- Created new tables\n"
-      "4.- Exit")
+      "4.- See the endpoint and the status of the process that ypu use\n"
+      "5.- Exit")
 option = input()
 
 # validation of the user input
-while option.isalpha() or int(option) <1 or int(option) > 4:
+while option.isalpha() or int(option) < 1 or int(option) > 5:
     print("The option that you input it's incorrect")
     option = input()
 
 # program
 option = int(option)
-while option != 4:
+while option != 5:
 
     # make the json file if the user input 1
     if option == 1:
@@ -55,15 +36,45 @@ while option != 4:
 
     # the program ask the name of txt file to make the tables automatically
     elif option == 2:
+        # validation of the process input
+        process_name = input("Please input the service that you want to use: ")
+        p_1 = get_process(process_name)
+        if p_1 is not None:
+            status = True
+        else:
+            status = False
+
+        # search the status of the process
+        if status:
+            id = get_pid(process_name)
+            p = Process(id)
+            endpoint_url = get_endpoint("localhost")
+        else:
+            endpoint_url = get_endpoint("cloud")
         file_txt = input("Insert the name of the file to read (PD: Only file with extension txt)\n")
         while file_txt.split(".")[-1] != "txt":
             file_txt = input("File can't read, try again (PD: Only file with extension txt)\n")
         # created tables
         print("Good Luck !")
-        create_table_shell_automatically(file_txt)
+        create_table_shell_automatically(file_txt, endpoint_url)
 
     # the program ask the name of the table, the region, the url endpoint to generate the tables
     elif option == 3:
+        # validation of the process input
+        process_name = input("Please input the service that you want to use: ")
+        p_1 = get_process(process_name)
+        if p_1 is not None:
+            status = True
+        else:
+            status = False
+
+        # search the status of the process
+        if status:
+            id = get_pid(process_name)
+            p = Process(id)
+            endpoint_url = get_endpoint("localhost")
+        else:
+            endpoint_url = get_endpoint("cloud")
         file_txt = input("Insert the name of the file to read (PD: Only file with extension txt)\n")
         while file_txt.split(".")[-1] != "txt":
             file_txt = input("File can't read, try again (PD: Only file with extension txt)\n")
@@ -91,10 +102,32 @@ while option != 4:
             create_table(region, endpoint_url, name_table, primary_key)
             print("Write E to exit or ")
 
+    elif option == 4:
+        # validation of the process input
+        process_name = input("Please input the service that you want to use: ")
+        p_1 = get_process(process_name)
+        if p_1 is not None:
+            print("The process exit ! You are running in localhost ")
+            status = True
+        else:
+            print("The process doesn't exist, you are running in the cloud")
+            status = False
+
+        # search the status of the process
+        if status:
+            id = get_pid(process_name)
+            p = Process(id)
+            endpoint_url = get_endpoint("localhost")
+            print("The state is : " + p.status() + "\nYour endpoint are: " + endpoint_url)
+        else:
+            print("We can't say the state of the process in localhost because doesn't exist")
+            endpoint_url = get_endpoint("cloud")
+            print("\nYour endpoint are: " + endpoint_url)
+
     # another input of option
-    print("Input another option or 4 to exit")
+    print("Input another option or 5 to exit")
     option = input()
-    while option.isalpha() or int(option) < 1 or int(option) > 4:
+    while option.isalpha() or int(option) < 1 or int(option) > 5:
         print("The option that you input it's incorrect")
         option = input()
     option = int(option)
