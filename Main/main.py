@@ -10,17 +10,18 @@ print("Welcome, please insert a option\n"
       "2.- Generate automatically the tables using a sql server script\n"
       "3.- Created new tables\n"
       "4.- See the endpoint and the status of the process that ypu use\n"
-      "5.- Exit")
+      "5.- Drop a table\n"
+      "6.- Exit")
 option = input()
 
 # validation of the user input
-while option.isalpha() or int(option) < 1 or int(option) > 5:
+while option.isalpha() or int(option) < 1 or int(option) > 6:
     print("The option that you input it's incorrect")
     option = input()
 
 # program
 option = int(option)
-while option != 5:
+while option != 6:
 
     # make the json file if the user input 1
     if option == 1:
@@ -86,7 +87,7 @@ while option != 5:
             while flat_copy != "E":
                 print("Input the name of the table")
                 name_table = input()
-                print("The name of your table is : {} it's this information wasn't correct press E ")
+                print("The name of your table is : {} it's this information wasn't correct press E ".format(name_table))
                 if validation_name_table(name_table):
                     flat_copy = input()
                 else:
@@ -124,10 +125,46 @@ while option != 5:
             endpoint_url = get_endpoint("cloud")
             print("\nYour endpoint are: " + endpoint_url)
 
+    elif option == 5:
+        # validation of the process input
+        process_name = input("Please input the service that you want to use: ")
+        p_1 = get_process(process_name)
+        if p_1 is not None:
+            status = True
+        else:
+            status = False
+
+        # search the status of the process
+        if status:
+            id = get_pid(process_name)
+            p = Process(id)
+            endpoint_url = get_endpoint("localhost")
+        else:
+            endpoint_url = get_endpoint("cloud")
+
+        # insert the region than we use
+        print("Input the region ")
+        region = input()
+
+        # insert the name of the table that the user want to delete
+        flat_copy = "A"
+        while flat_copy != "E":
+            print("Input the name of the table")
+            name_table = input()
+            print("The name of your table is : {} it's this information wasn't correct press E ".format(name_table))
+            if validation_name_table(name_table):
+                flat_copy = input()
+            else:
+                print("You have input a incorrect character")
+                flat_copy = "A"
+
+        # drop a table of the database
+        drop_table(region, endpoint_url, name_table)
+
     # another input of option
-    print("Input another option or 5 to exit")
+    print("Input another option or 6 to exit")
     option = input()
-    while option.isalpha() or int(option) < 1 or int(option) > 5:
+    while option.isalpha() or int(option) < 1 or int(option) > 6:
         print("The option that you input it's incorrect")
         option = input()
     option = int(option)

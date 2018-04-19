@@ -228,3 +228,10 @@ def get_endpoint(string):
     file.close()
     return endpoint
 
+
+def drop_table(region, endpoint_url, name_table):
+    import boto3
+
+    dynamodb = boto3.resource('dynamodb', region_name=region, endpoint_url=endpoint_url)
+    table = dynamodb.Table(name_table)
+    table.delete();
