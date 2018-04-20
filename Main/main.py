@@ -11,17 +11,18 @@ print("Welcome, please insert a option\n"
       "3.- Created new tables\n"
       "4.- See the endpoint and the status of the process that ypu use\n"
       "5.- Drop a table\n"
-      "6.- Exit")
+      "6.- Drop all the tables in the databases\n"
+      "7.- Exit")
 option = input()
 
 # validation of the user input
-while option.isalpha() or int(option) < 1 or int(option) > 6:
+while option.isalpha() or int(option) < 1 or int(option) > 7:
     print("The option that you input it's incorrect")
     option = input()
 
 # program
 option = int(option)
-while option != 6:
+while option != 7:
 
     # make the json file if the user input 1
     if option == 1:
@@ -162,9 +163,9 @@ while option != 6:
         drop_table(region, endpoint_url, name_table)
 
     # another input of option
-    print("Input another option or 6 to exit")
+    print("Input another option or 7 to exit")
     option = input()
-    while option.isalpha() or int(option) < 1 or int(option) > 6:
+    while option.isalpha() or int(option) < 1 or int(option) > 7:
         print("The option that you input it's incorrect")
         option = input()
     option = int(option)

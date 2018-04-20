@@ -235,3 +235,56 @@ def drop_table(region, endpoint_url, name_table):
     dynamodb = boto3.resource('dynamodb', region_name=region, endpoint_url=endpoint_url)
     table = dynamodb.Table(name_table)
     table.delete();
+
+
+def drop_all_the_tables():
+    import boto3
+
+    # validation of the process input
+    process_name = input("Please input the service that you want to use: ")
+    p_1 = get_process(process_name)
+    if p_1 is not None:
+        status = True
+    else:
+        status = False
+
+    # search the status of the process
+    if status:
+        id = get_pid(process_name)
+        p = Process(id)
+        endpoint_url = get_endpoint("localhost")
+    else:
+        endpoint_url = get_endpoint("cloud")
+    # the program ask the name of txt file to make the tables automatically
+    file_txt = input("Insert the name of the file to read (PD: Only file with extension txt)\n")
+    while file_txt.split(".")[-1] != "txt":
+        file_txt = input("File can't read, try again (PD: Only file with extension txt)\n")
+    # drop the tables
+    # extract name of tables in the file
+    name_tables = []
+    file = open(file_txt, "r")
+    for line in file:
+        line = line.strip()
+        if line.count(" ") > 0:
+            line = line.split(" ")
+            if ("TABLE" in line) and ("CREATE" in line):
+                table = line[-1].strip("[")
+                table = table.strip("]")
+                name_tables.append(table)
+    print("Please insert the region ")
+    region = input()
+    dynamodb = boto3.resource('dynamodb', region_name=region, endpoint_url=endpoint_url)
+    for tablee in name_tables:
+        table = dynamodb.Table(tablee)
+        table.delete();
+
+
+def ingresar_datos(region, endpoint_url, name_table):
+    import boto3
+    import json
+    import decimal
+
+    dynamodb = boto3.resource('dynamodb', region_name=region, endpoint_url=endpoint_url)
+    table = dynamodb.Table(name_table)
+
+    # with open("moviedata.json") as json_file:
